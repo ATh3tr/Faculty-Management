@@ -1,0 +1,23 @@
+@host = https://localhost:7001
+@token = paste-access-token
+
+GET {{host}}/health
+
+###
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@faculty.local",
+  "password": "Admin123!"
+}
+
+###
+GET {{host}}/api/catalog/academic-years
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/rooms/available?date=2026-10-04&slotId=1
+Authorization: Bearer {{token}}
+
+###
