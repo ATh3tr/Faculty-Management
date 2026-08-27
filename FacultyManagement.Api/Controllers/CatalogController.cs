@@ -25,7 +25,25 @@ public sealed class CatalogController(CatalogQueryService catalog) : ControllerB
     [HttpGet("rooms")]
     public Task<IReadOnlyCollection<RoomView>> Rooms() => catalog.RoomsAsync();
 
-    [Authorize(Roles = AppRoles.Admin)]
+    [HttpGet("time-slots")]
+    public Task<IReadOnlyCollection<TimeSlotView>> TimeSlots() => catalog.TimeSlotsAsync();
+
+    [Authorize(Roles = $"{AppRoles.ExamsOfficer},{AppRoles.Admin}")]
+    [HttpGet("exam-periods")]
+    public Task<IReadOnlyCollection<ExamPeriodView>> ExamPeriods(Guid academicYearId) => catalog.ExamPeriodsAsync(academicYearId);
+
+    [Authorize(Roles = $"{AppRoles.ExamsOfficer},{AppRoles.Admin}")]
+    [HttpGet("student-course-records")]
+    public Task<IReadOnlyCollection<StudentCourseRecordView>> StudentCourseRecords(
+        Guid? studentUserId, Guid? courseId, CourseResultStatus? status, string? search) =>
+        catalog.StudentCourseRecordsAsync(studentUserId, courseId, status, search);
+
+    [Authorize(Roles = $"{AppRoles.ExamsOfficer},{AppRoles.Admin}")]
+    [HttpGet("exam-marks")]
+    public Task<IReadOnlyCollection<ExamMarkView>> ExamMarks(Guid examPeriodId, string? search) =>
+        catalog.ExamMarksAsync(examPeriodId, search);
+
+    [Authorize(Roles = $"{AppRoles.Teacher},{AppRoles.Professor},{AppRoles.ExamsOfficer},{AppRoles.Admin}")]
     [HttpGet("students")]
     public Task<IReadOnlyCollection<StudentView>> Students(int? studyYear, string? search) => catalog.StudentsAsync(studyYear, search);
 

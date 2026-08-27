@@ -36,6 +36,52 @@ public sealed class CatalogQueryService(FacultyDbContext db)
         await db.Rooms.AsNoTracking().OrderBy(x => x.Code)
             .Select(x => new RoomView(x.Id, x.Code, x.Capacity, x.IsLab, x.HasProjector, x.IsActive)).ToListAsync(ct);
 
+    public async Task<IReadOnlyCollection<TimeSlotView>> TimeSlotsAsync(CancellationToken ct = default) =>
+        await db.TimeSlots.AsNoTracking().OrderBy(x => x.Id)
+            .Select(x => new TimeSlotView(x.Id, x.StartsAt, x.EndsAt)).ToListAsync(ct);
+
+    public async Task<IReadOnlyCollection<ExamPeriodView>> ExamPeriodsAsync(Guid academicYearId, CancellationToken ct = default) =>
+        await db.ExamPeriods.AsNoTracking().Where(x => x.AcademicYearId == academicYearId)
+            .OrderByDescending(x => x.StartsOn)
+            .Select(x => new ExamPeriodView(x.Id, x.AcademicYearId, x.NameArabic, x.NameEnglish,
+                x.StartsOn, x.EndsOn, x.IsRetake, x.IsClosed)).ToListAsync(ct);
+
+    public async Task<IReadOnlyCollection<StudentCourseRecordView>> StudentCourseRecordsAsync(
+        Guid? studentUserId, Guid? courseId, CourseResultStatus? status, string? search, CancellationToken ct = default)
+    {
+        var query = db.StudentCourseRecords.AsNoTracking()
+            .Where(x => (studentUserId == null || x.StudentUserId == studentUserId)
+                && (courseId == null || x.CourseId == courseId)
+                && (status == null || x.Status == status));
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(x => x.StudentUser.StudentProfile!.UniversityNumber.Contains(search)
+                || x.StudentUser.FullNameArabic.Contains(search)
+                || x.StudentUser.FullNameEnglish.Contains(search)
+                || x.Course.Code.Contains(search));
+        return await query.OrderBy(x => x.StudentUser.StudentProfile!.UniversityNumber).ThenBy(x => x.Course.Code).Take(500)
+            .Select(x => new StudentCourseRecordView(x.Id, x.StudentUserId,
+                x.StudentUser.StudentProfile!.UniversityNumber, x.StudentUser.FullNameArabic, x.StudentUser.FullNameEnglish,
+                x.CourseId, x.Course.Code, x.Course.NameArabic, x.Course.NameEnglish, x.Status, x.AssignedAcademicYearId))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyCollection<ExamMarkView>> ExamMarksAsync(Guid examPeriodId, string? search, CancellationToken ct = default)
+    {
+        var query = db.MarkAttempts.AsNoTracking().Where(x => x.ExamPeriodId == examPeriodId);
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(x => x.StudentCourseRecord.StudentUser.StudentProfile!.UniversityNumber.Contains(search)
+                || x.StudentCourseRecord.StudentUser.FullNameArabic.Contains(search)
+                || x.StudentCourseRecord.StudentUser.FullNameEnglish.Contains(search)
+                || x.StudentCourseRecord.Course.Code.Contains(search));
+        return await query.OrderBy(x => x.StudentCourseRecord.Course.Code)
+            .ThenBy(x => x.StudentCourseRecord.StudentUser.StudentProfile!.UniversityNumber).Take(500)
+            .Select(x => new ExamMarkView(x.Id, x.StudentCourseRecordId, x.StudentCourseRecord.StudentUserId,
+                x.StudentCourseRecord.StudentUser.StudentProfile!.UniversityNumber,
+                x.StudentCourseRecord.StudentUser.FullNameArabic, x.StudentCourseRecord.StudentUser.FullNameEnglish,
+                x.StudentCourseRecord.Course.Code, x.ExamPeriodId, x.ResultKind, x.Mark, x.IsPublished, x.EnteredAtUtc))
+            .ToListAsync(ct);
+    }
+
     public async Task<IReadOnlyCollection<StudentView>> StudentsAsync(int? studyYear, string? search, CancellationToken ct = default)
     {
         var query = db.StudentProfiles.AsNoTracking().Where(x => studyYear == null || x.CurrentStudyYear == studyYear);

@@ -4,3 +4,5 @@
 .vs
 .env
 TestResults
+**/node_modules
+**/dist

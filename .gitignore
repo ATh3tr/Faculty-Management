@@ -9,3 +9,7 @@
 .env
 TestResults/
 coverage/
+**/node_modules/
+**/dist/
+*.tsbuildinfo
+.env.local

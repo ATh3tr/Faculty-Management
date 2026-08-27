@@ -91,7 +91,16 @@ public sealed record OfferingView(Guid Id, Guid CourseId, string CourseCode, Gui
 public sealed record StaffAssignmentView(Guid StaffUserId, string NameArabic, string NameEnglish, StaffCourseRole Role);
 public sealed record DivisionView(Guid Id, Guid AcademicYearId, int StudyYear, int Number, int Capacity, int MemberCount);
 public sealed record RoomView(Guid Id, string Code, int Capacity, bool IsLab, bool HasProjector, bool IsActive);
+public sealed record TimeSlotView(int Id, TimeOnly StartsAt, TimeOnly EndsAt);
+public sealed record ExamPeriodView(Guid Id, Guid AcademicYearId, string NameArabic, string NameEnglish,
+    DateOnly StartsOn, DateOnly EndsOn, bool IsRetake, bool IsClosed);
 public sealed record StudentView(Guid UserId, string UniversityNumber, string NameArabic, string NameEnglish, int StudyYear, AcademicStanding Standing);
+public sealed record StudentCourseRecordView(Guid Id, Guid StudentUserId, string UniversityNumber,
+    string StudentNameArabic, string StudentNameEnglish, Guid CourseId, string CourseCode,
+    string CourseNameArabic, string CourseNameEnglish, CourseResultStatus Status, Guid AssignedAcademicYearId);
+public sealed record ExamMarkView(Guid AttemptId, Guid StudentCourseRecordId, Guid StudentUserId,
+    string UniversityNumber, string StudentNameArabic, string StudentNameEnglish, string CourseCode,
+    Guid ExamPeriodId, ExamResultKind ResultKind, decimal? Mark, bool IsPublished, DateTime EnteredAtUtc);
 public sealed record StaffView(Guid UserId, string NameArabic, string NameEnglish, string? StaffNumber, IReadOnlyCollection<string> Roles);
 public sealed record AppealView(Guid Id, Guid MarkAttemptId, Guid StudentUserId, string StudentName, string CourseCode,
     string Reason, AppealStatus Status, string? ProfessorComment, string? DecisionComment, DateTime SubmittedAtUtc);

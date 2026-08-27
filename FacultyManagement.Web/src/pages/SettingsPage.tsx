@@ -1,0 +1,15 @@
+import { useEffect, useState } from "react";
+import { RefreshCw, Save } from "lucide-react";
+import { Card, DataTable, FormField, LoadingBlock, PageHeader, Tabs } from "../components/ui";
+import { api } from "../lib/api";
+import { formatDateTime } from "../lib/format";
+import { useLanguage } from "../lib/i18n";
+import type { AuditEntry } from "../types";
+
+export function SettingsPage() {
+  const { language, pick } = useLanguage(); const [tab,setTab]=useState("settings"); const [settings,setSettings]=useState<Record<string,string>>({}); const [audit,setAudit]=useState<AuditEntry[]>([]); const [loading,setLoading]=useState(true); const [saving,setSaving]=useState("");
+  const load=async()=>{setLoading(true);try{const [s,a]=await Promise.all([api<Record<string,string>>("/api/settings"),api<AuditEntry[]>("/api/catalog/audit?take=300")]);setSettings(s);setAudit(a);}finally{setLoading(false);}}; useEffect(()=>{load();},[]);
+  const save=async(key:string)=>{setSaving(key);try{await api(`/api/settings/${encodeURIComponent(key)}`,{method:"PUT",body:JSON.stringify(settings[key]),headers:{"Content-Type":"application/json"}});}finally{setSaving("");}};
+  const labels:Record<string,string>={MaximumFailedCoursesForPromotion:pick("الحد الأقصى للمواد الراسبة للترفيع", "Maximum failures for promotion"),ProgramYears:pick("عدد سنوات البرنامج", "Program years"),DefaultDivisionCapacity:pick("السعة الافتراضية للشعبة", "Default division capacity"),AppealDeadlineDays:pick("مهلة الاعتراض بالأيام", "Appeal deadline in days"),TimeZone:pick("المنطقة الزمنية", "Time zone")};
+  return <><PageHeader eyebrow={pick("حوكمة النظام", "System governance")} title={pick("الإعدادات وسجل التدقيق", "Settings and audit")} description={pick("عدّل القيم القابلة للضبط وراجع أثر العمليات الحساسة.", "Adjust configurable values and review sensitive operations.")} actions={<button className="button button-secondary" onClick={load}><RefreshCw size={17}/>{pick("تحديث", "Refresh")}</button>}/><Tabs active={tab} onChange={setTab} tabs={[{id:"settings",label:pick("الإعدادات", "Settings")},{id:"audit",label:pick("سجل التدقيق", "Audit log")}]}/>{loading?<LoadingBlock/>:tab==="settings"?<div className="settings-grid">{Object.entries(settings).map(([key,value])=><Card key={key}><div className="setting-row"><FormField label={labels[key]||key} hint={key}><input value={value} onChange={e=>setSettings(x=>({...x,[key]:e.target.value}))}/></FormField><button className="button button-primary" disabled={saving===key} onClick={()=>save(key)}><Save size={16}/>{saving===key?pick("حفظ...", "Saving..."):pick("حفظ", "Save")}</button></div></Card>)}</div>:<Card><DataTable headers={[pick("الوقت", "Time"),pick("العملية", "Action"),pick("الكيان", "Entity"),pick("المعرف", "Identifier"),pick("المستخدم", "User")]}>{audit.map(x=><tr key={x.id}><td>{formatDateTime(x.createdAtUtc,language)}</td><td><strong>{x.action}</strong></td><td>{x.entityType}</td><td><code>{x.entityId.slice(0,18)}</code></td><td><code>{x.userId?.slice(0,8)||"system"}</code></td></tr>)}</DataTable></Card>}</>;
+}
