@@ -2,6 +2,7 @@ using FacultyManagement.Business.Contracts;
 using FacultyManagement.Data;
 using FacultyManagement.Data.Domain;
 using Google.OrTools.Sat;
+using Google.OrTools.Util;
 using Microsoft.EntityFrameworkCore;
 
 namespace FacultyManagement.Business.Services;
@@ -158,7 +159,7 @@ public sealed class TimetableGeneratorService(FacultyDbContext db, INotification
     {
         var day = model.NewIntVar(0, 4, $"day_{index}");
         var slot = model.NewIntVar(0, 4, $"slot_{index}");
-        var room = model.NewIntVarFromDomain(Domain.FromValues(requirement.AllowedRooms.Select(x => (long)x)), $"room_{index}");
+        var room = model.NewIntVarFromDomain(Domain.FromValues(requirement.AllowedRooms.Select(x => (long)x).ToArray()), $"room_{index}");
         var allowedStaff = requirement.AllowedStaff.Distinct().Select(x => (long)staffIndex[x]).ToArray();
         var staff = model.NewIntVarFromDomain(Domain.FromValues(allowedStaff), $"staff_{index}");
         return new SessionVariables(day, slot, room, staff);

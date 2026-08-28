@@ -50,10 +50,11 @@ The API runs at `http://localhost:5176`, Swagger at `http://localhost:5176/swagg
 In a second terminal, start the frontend:
 
 ```powershell
-cd FacultyManagement.Web
-npm install
+npm install --prefix FacultyManagement.Web
 npm run dev
 ```
+
+The repository-level npm scripts forward to `FacultyManagement.Web`, so these commands are run from the repository root.
 
 Open `http://localhost:5173`. Vite proxies API and SignalR requests to `http://localhost:5176`. Override that target with `VITE_API_PROXY_TARGET` when necessary. For a separately hosted frontend, set `VITE_API_URL` at build time.
 
@@ -62,7 +63,6 @@ Open `http://localhost:5173`. Vite proxies API and SignalR requests to `http://l
 ```powershell
 dotnet build FacultyManagement.sln
 dotnet test FacultyManagement.sln --no-build
-cd FacultyManagement.Web
 npm test
 npm run build
 ```

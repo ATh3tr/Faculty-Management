@@ -1,0 +1,9 @@
+{
+  "name": "faculty-management",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix FacultyManagement.Web run dev",
+    "build": "npm --prefix FacultyManagement.Web run build",
+    "test": "npm --prefix FacultyManagement.Web run test"
+  }
+}

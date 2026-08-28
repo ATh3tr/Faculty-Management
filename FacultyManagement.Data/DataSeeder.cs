@@ -37,11 +37,11 @@ public static class DataSeeder
         if (!await db.TimeSlots.AnyAsync(cancellationToken))
         {
             db.TimeSlots.AddRange(
-                new TimeSlot { Id = 1, StartsAt = new TimeOnly(9, 0), EndsAt = new TimeOnly(10, 30) },
-                new TimeSlot { Id = 2, StartsAt = new TimeOnly(10, 45), EndsAt = new TimeOnly(12, 15) },
-                new TimeSlot { Id = 3, StartsAt = new TimeOnly(12, 30), EndsAt = new TimeOnly(14, 0) },
-                new TimeSlot { Id = 4, StartsAt = new TimeOnly(14, 15), EndsAt = new TimeOnly(15, 45) },
-                new TimeSlot { Id = 5, StartsAt = new TimeOnly(16, 0), EndsAt = new TimeOnly(17, 30) });
+                new TimeSlot { StartsAt = new TimeOnly(9, 0), EndsAt = new TimeOnly(10, 30) },
+                new TimeSlot { StartsAt = new TimeOnly(10, 45), EndsAt = new TimeOnly(12, 15) },
+                new TimeSlot { StartsAt = new TimeOnly(12, 30), EndsAt = new TimeOnly(14, 0) },
+                new TimeSlot { StartsAt = new TimeOnly(14, 15), EndsAt = new TimeOnly(15, 45) },
+                new TimeSlot { StartsAt = new TimeOnly(16, 0), EndsAt = new TimeOnly(17, 30) });
         }
 
         var admin = await userManager.FindByEmailAsync(adminEmail);
