@@ -5,7 +5,9 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "version": "latest",
       "dockerDashComposeVersion": "v2"
-    }
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/sshd:1": {}
   },
   "hostRequirements": {
     "cpus": 4,
@@ -22,4 +24,3 @@
   "postCreateCommand": "bash .devcontainer/setup-demo.sh",
   "remoteUser": "vscode"
 }
-
