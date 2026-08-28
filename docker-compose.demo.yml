@@ -1,0 +1,7 @@
+services:
+  api:
+    environment:
+      DemoData__SeedOnStartup: "true"
+      DemoData__Password: ${FACULTY_DEMO_PASSWORD}
+      Swagger__Enabled: "true"
+

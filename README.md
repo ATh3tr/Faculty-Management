@@ -33,6 +33,40 @@ Backend controllers do not access EF Core directly. Its dependency direction is 
 - Node.js 24 and npm 11
 - SQL Server/LocalDB, or Docker Desktop
 
+## GitHub Codespaces committee demo
+
+The Codespaces configuration runs SQL Server, the API, and the React/Nginx frontend entirely in GitHub's cloud. Demo data is enabled only by `docker-compose.demo.yml`; normal local and production startup do not create it.
+
+1. On the GitHub repository page, select **Code**, **Codespaces**, then **Create codespace on main**.
+2. Choose a 4-core machine if GitHub asks for a machine type.
+3. After the browser editor opens and setup completes, run:
+
+```bash
+bash .devcontainer/start-demo.sh
+```
+
+The first build can take several minutes. The script starts all containers, waits for `/health`, makes port `3000` public, and prints the committee URL. If GitHub does not allow the script to change visibility, open the **Ports** panel, right-click port `3000`, and select **Port Visibility > Public**.
+
+Demo accounts:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@faculty.demo` | `AdminDemo123!` |
+| Professor | `professor@faculty.demo` | `Demo123!` |
+| Teacher | `teacher@faculty.demo` | `Demo123!` |
+| Exams Officer | `exams@faculty.demo` | `Demo123!` |
+| Student | `student1@faculty.demo` | `Demo123!` |
+
+Two additional students are available as `student2@faculty.demo` and `student3@faculty.demo`, also with `Demo123!`. The database includes a current academic year, semesters, six courses, five rooms, two divisions, staff assignments, marks, an appeal, published schedules, announcements, notifications, and a room maintenance period.
+
+Before presenting, set the Codespaces idle timeout to four hours under **GitHub Settings > Codespaces**, start the demo at least 15 minutes early, and verify the URL in a private browser window. A restarted codespace may require port `3000` to be made public again.
+
+Stop the containers without deleting the demo database:
+
+```bash
+bash .devcontainer/stop-demo.sh
+```
+
 ## Local development
 
 The development configuration uses LocalDB and seeds `admin@faculty.local` with password `Admin123!`. Change it outside a local demonstration.

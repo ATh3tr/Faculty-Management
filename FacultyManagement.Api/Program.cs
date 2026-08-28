@@ -106,15 +106,26 @@ app.MapControllers();
 app.MapHub<FacultyHub>("/hubs/faculty");
 app.MapHealthChecks("/health").AllowAnonymous();
 
-if (builder.Configuration.GetValue<bool>("Database:SeedOnStartup"))
+var seedDatabase = builder.Configuration.GetValue<bool>("Database:SeedOnStartup");
+var seedDemoData = builder.Configuration.GetValue<bool>("DemoData:SeedOnStartup");
+if (seedDatabase || seedDemoData)
 {
     await using var scope = app.Services.CreateAsyncScope();
+    var db = scope.ServiceProvider.GetRequiredService<FacultyDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     await DataSeeder.SeedAsync(
-        scope.ServiceProvider.GetRequiredService<FacultyDbContext>(),
+        db,
         scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>(),
-        scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(),
+        userManager,
         builder.Configuration["SeedAdmin:Email"] ?? "admin@faculty.local",
         builder.Configuration["SeedAdmin:Password"] ?? throw new InvalidOperationException("SeedAdmin:Password is required."));
+    if (seedDemoData)
+    {
+        await DemoDataSeeder.SeedAsync(
+            db,
+            userManager,
+            builder.Configuration["DemoData:Password"] ?? throw new InvalidOperationException("DemoData:Password is required."));
+    }
 }
 
 app.Run();
