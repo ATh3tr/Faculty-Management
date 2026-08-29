@@ -15,18 +15,23 @@ export async function api<T = void>(path: string, init: RequestInit = {}): Promi
   const response = await fetch(`${apiBase}${path}`, { ...init, headers, credentials: "include" });
   if (!response.ok) {
     const rawBody = await response.text();
-let details: unknown = rawBody;
+    let details: unknown;
 
-if (rawBody) {
-  try {
-    details = JSON.parse(rawBody);
-  } catch {
-    // Keep the original text when it is not JSON.
-  }
-}
-    const problem = details as { detail?: string; title?: string; errors?: Record<string, string[]> } | undefined;
+    if (rawBody) {
+      try {
+        details = JSON.parse(rawBody);
+      } catch {
+        details = rawBody;
+      }
+    }
+
+    const problem = typeof details === "object" && details !== null
+      ? details as { detail?: string; title?: string; errors?: Record<string, string[]> }
+      : undefined;
     const validation = problem?.errors ? Object.values(problem.errors).flat().join(" ") : "";
-    throw new ApiError(response.status, validation || problem?.detail || problem?.title || `Request failed (${response.status})`, details);
+    const plainText = typeof details === "string" ? details.trim() : "";
+    const message = validation || problem?.detail || problem?.title || plainText || `Request failed (${response.status})`;
+    throw new ApiError(response.status, message, details);
   }
   if (response.status === 204 || response.headers.get("content-length") === "0") return undefined as T;
   return response.json() as Promise<T>;
