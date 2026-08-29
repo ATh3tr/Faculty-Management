@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 type Language = "ar" | "en";
 type Dictionary = Record<string, { ar: string; en: string }>;
 const words: Dictionary = {
-  brand: { ar: "كلية الهندسة المعلوماتية", en: "Faculty of Informatics Engineering" },
   overview: { ar: "نظرة عامة", en: "Overview" }, schedule: { ar: "الجدول", en: "Schedule" },
   marks: { ar: "العلامات", en: "Marks" }, appeals: { ar: "الاعتراضات", en: "Appeals" },
   notifications: { ar: "الإشعارات", en: "Notifications" }, division: { ar: "الشعبة", en: "Division" },

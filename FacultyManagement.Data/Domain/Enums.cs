@@ -29,4 +29,12 @@ public static class SettingKeys
     public const string DefaultDivisionCapacity = "Academic.DefaultDivisionCapacity";
     public const string AppealDeadlineDays = "Marks.AppealDeadlineDays";
     public const string TimeZone = "System.TimeZone";
+    public const string FacultyNameArabic = "Branding.FacultyNameArabic";
+    public const string FacultyNameEnglish = "Branding.FacultyNameEnglish";
+}
+
+public static class BrandingDefaults
+{
+    public const string FacultyNameArabic = "كلية الهندسة المعلوماتية";
+    public const string FacultyNameEnglish = "Faculty of Informatics Engineering";
 }

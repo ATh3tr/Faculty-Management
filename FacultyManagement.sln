@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11903.348 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacultyManagement.Api", "FacultyManagement.Api\FacultyManagement.Api.csproj", "{A3339860-DE76-40E6-AB88-7F4C3B9EF903}"
 EndProject
@@ -12,6 +12,27 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacultyManagement.UnitTests", "FacultyManagement.UnitTests\FacultyManagement.UnitTests.csproj", "{A7F6CC64-9DC2-41A0-9954-F70111171C7C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacultyManagement.IntegrationTests", "FacultyManagement.IntegrationTests\FacultyManagement.IntegrationTests.csproj", "{3EA6C030-FC95-44DD-9494-A6BBE0E81A1C}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "FacultyManagement.Web", "FacultyManagement.Web\", "{E9B7DFB4-D680-6008-49DE-F99312B0258E}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_57153"
+		Debug.AspNetCompiler.PhysicalPath = "FacultyManagement.Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_57153\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_57153"
+		Release.AspNetCompiler.PhysicalPath = "FacultyManagement.Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_57153\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "57153"
+		SlnRelativePath = "FacultyManagement.Web\"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,8 +104,23 @@ Global
 		{3EA6C030-FC95-44DD-9494-A6BBE0E81A1C}.Release|x64.Build.0 = Release|Any CPU
 		{3EA6C030-FC95-44DD-9494-A6BBE0E81A1C}.Release|x86.ActiveCfg = Release|Any CPU
 		{3EA6C030-FC95-44DD-9494-A6BBE0E81A1C}.Release|x86.Build.0 = Release|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Debug|x64.Build.0 = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Debug|x86.Build.0 = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Release|x64.ActiveCfg = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Release|x64.Build.0 = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Release|x86.ActiveCfg = Debug|Any CPU
+		{E9B7DFB4-D680-6008-49DE-F99312B0258E}.Release|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A6A20A6-7D8A-49B6-BAA8-B3C8EF5D2A21}
 	EndGlobalSection
 EndGlobal

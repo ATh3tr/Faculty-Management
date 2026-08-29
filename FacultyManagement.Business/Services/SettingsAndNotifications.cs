@@ -17,8 +17,14 @@ public sealed class SettingsService(FacultyDbContext db) : ISettingsService
             : throw new BusinessException($"Setting '{key}' is not a valid integer.", 500, "invalid_setting");
     }
 
-    public async Task<IReadOnlyDictionary<string, string>> GetAllAsync(CancellationToken cancellationToken = default) =>
-        await db.SystemSettings.AsNoTracking().ToDictionaryAsync(x => x.Key, x => x.Value, cancellationToken);
+    public async Task<IReadOnlyDictionary<string, string>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var values = await db.SystemSettings.AsNoTracking()
+            .ToDictionaryAsync(x => x.Key, x => x.Value, cancellationToken);
+        values.TryAdd(SettingKeys.FacultyNameArabic, BrandingDefaults.FacultyNameArabic);
+        values.TryAdd(SettingKeys.FacultyNameEnglish, BrandingDefaults.FacultyNameEnglish);
+        return values;
+    }
 
     public async Task SetAsync(string key, string value, Guid userId, CancellationToken cancellationToken = default)
     {

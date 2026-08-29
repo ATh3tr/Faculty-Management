@@ -2,13 +2,15 @@ import { useState, type FormEvent } from "react";
 import { ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap, Languages, LoaderCircle, LockKeyhole, Mail, ShieldCheck, UserRound } from "lucide-react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { useBranding } from "../branding/BrandingContext";
 import { ApiError, api, json } from "../lib/api";
 import { useLanguage } from "../lib/i18n";
 import { arabicTextPattern, asciiDigitsPattern, englishTextPattern, strictEmailPattern } from "../lib/validation";
 
 function AuthFrame({ children }: { children: React.ReactNode }) {
+  const { facultyName } = useBranding();
   const { toggleLanguage, t, pick } = useLanguage();
-  return <div className="auth-page"><section className="auth-story"><div className="auth-brand"><div className="brand-emblem"><GraduationCap size={26} /></div><strong>FacultyFlow</strong></div><div className="story-content"><span className="eyebrow">{pick("جامعة حلب", "Aleppo University")}</span><h1>{pick("مساحة واحدة ليوم جامعي أكثر تنظيماً.", "One place for a better organized faculty day.")}</h1><p>{pick("الجداول والقاعات والعلامات والإعلانات، مصممة لكل دور في الكلية.", "Schedules, rooms, marks and announcements—designed for every role in the faculty.")}</p><div className="story-points"><span><ShieldCheck size={18} />{pick("وصول آمن حسب الصلاحيات", "Secure role-based access")}</span><span><CheckCircle2 size={18} />{pick("حجوزات فورية بدون تعارض", "Instant conflict-free booking")}</span></div></div><small>Faculty of Informatics Engineering · 2026</small></section><section className="auth-panel"><button className="language-button auth-language" onClick={toggleLanguage}><Languages size={17} />{t("language")}</button>{children}</section></div>;
+  return <div className="auth-page"><section className="auth-story"><div className="auth-brand"><div className="brand-emblem"><GraduationCap size={26} /></div><strong>{facultyName}</strong></div><div className="story-content"><span className="eyebrow">{pick("جامعة حلب", "Aleppo University")}</span><h1>{pick("مساحة واحدة ليوم جامعي أكثر تنظيماً.", "One place for a better organized faculty day.")}</h1><p>{pick("الجداول والقاعات والعلامات والإعلانات، مصممة لكل دور في الكلية.", "Schedules, rooms, marks and announcements—designed for every role in the faculty.")}</p><div className="story-points"><span><ShieldCheck size={18} />{pick("وصول آمن حسب الصلاحيات", "Secure role-based access")}</span><span><CheckCircle2 size={18} />{pick("حجوزات فورية بدون تعارض", "Instant conflict-free booking")}</span></div></div><small>{facultyName} · {new Date().getFullYear()}</small></section><section className="auth-panel"><button className="language-button auth-language" onClick={toggleLanguage}><Languages size={17} />{t("language")}</button>{children}</section></div>;
 }
 
 export function LoginPage() {
