@@ -8,6 +8,20 @@ namespace FacultyManagement.Business.Services;
 
 public sealed class DivisionService(FacultyDbContext db, ISettingsService settings)
 {
+    public async Task<DivisionAssignmentResult?> GetAssignmentAsync(Guid studentUserId, CancellationToken ct = default)
+    {
+        var academicYearId = await db.AcademicYears.Where(x => x.IsCurrent)
+            .Select(x => (Guid?)x.Id).SingleOrDefaultAsync(ct);
+        if (academicYearId is null) return null;
+
+        return await db.DivisionMemberships.AsNoTracking()
+            .Where(x => x.StudentUserId == studentUserId && x.AcademicYearId == academicYearId)
+            .Select(x => new DivisionAssignmentResult(
+                x.DivisionId, x.Division.Number, x.Division.StudyYear,
+                x.Division.Capacity, x.Division.Memberships.Count, false))
+            .SingleOrDefaultAsync(ct);
+    }
+
     public async Task<DivisionAssignmentResult> AssignAsync(Guid studentUserId, CancellationToken ct = default)
     {
         var student = await db.StudentProfiles.SingleOrDefaultAsync(x => x.UserId == studentUserId, ct)

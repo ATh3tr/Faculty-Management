@@ -51,6 +51,7 @@ public sealed class AcademicService(FacultyDbContext db, UserManager<Application
 
     public async Task<ExamPeriod> CreateExamPeriodAsync(CreateExamPeriodRequest request, CancellationToken ct = default)
     {
+        InputRules.ValidateBilingual(request.NameArabic, request.NameEnglish, "name");
         var year = await db.AcademicYears.FindAsync([request.AcademicYearId], ct) ?? throw new BusinessException("Academic year not found.", 404);
         if (request.StartsOn < year.StartsOn || request.EndsOn > year.EndsOn || request.EndsOn < request.StartsOn)
             throw new BusinessException("Exam-period dates must be valid and inside the academic year.");
@@ -97,6 +98,7 @@ public sealed class AcademicService(FacultyDbContext db, UserManager<Application
 
     public async Task<Course> CreateCourseAsync(CreateCourseRequest request, CancellationToken ct = default)
     {
+        InputRules.ValidateBilingual(request.NameArabic, request.NameEnglish, "name");
         ValidateCourse(request.StudyYear, request.SemesterNumber, request.TheoreticalSessionsPerWeek, request.PracticalSessionsPerDivisionPerWeek);
         var course = new Course
         {
@@ -113,6 +115,7 @@ public sealed class AcademicService(FacultyDbContext db, UserManager<Application
 
     public async Task UpdateCourseAsync(Guid id, UpdateCourseRequest request, CancellationToken ct = default)
     {
+        InputRules.ValidateBilingual(request.NameArabic, request.NameEnglish, "name");
         ValidateCourse(request.StudyYear, request.SemesterNumber, request.TheoreticalSessionsPerWeek, request.PracticalSessionsPerDivisionPerWeek);
         var course = await db.Courses.FindAsync([id], ct) ?? throw new BusinessException("Course not found.", 404);
         course.NameArabic = request.NameArabic.Trim(); course.NameEnglish = request.NameEnglish.Trim();

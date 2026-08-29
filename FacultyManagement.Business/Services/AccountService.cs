@@ -13,6 +13,9 @@ public sealed class AccountService(
 {
     public async Task<Guid> RegisterStudentAsync(RegisterStudentRequest request)
     {
+        InputRules.ValidateUniversityNumber(request.UniversityNumber);
+        InputRules.ValidateEmail(request.Email);
+        InputRules.ValidateBilingual(request.FullNameArabic, request.FullNameEnglish, "name");
         if (await db.StudentProfiles.AnyAsync(x => x.UniversityNumber == request.UniversityNumber))
             throw new BusinessException("University number is already registered.", 409, "university_number_exists");
 
@@ -26,6 +29,8 @@ public sealed class AccountService(
 
     public async Task<Guid> RegisterStaffAsync(RegisterStaffRequest request)
     {
+        InputRules.ValidateEmail(request.Email);
+        InputRules.ValidateBilingual(request.FullNameArabic, request.FullNameEnglish, "name");
         var invalidRoles = request.RequestedRoles.Except([AppRoles.Teacher, AppRoles.Professor, AppRoles.ExamsOfficer]).ToArray();
         if (invalidRoles.Length > 0)
             throw new BusinessException($"Invalid staff roles: {string.Join(", ", invalidRoles)}");

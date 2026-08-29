@@ -9,6 +9,8 @@ public sealed class CommunicationService(FacultyDbContext db, INotificationServi
 {
     public async Task<Guid> PublishAnnouncementAsync(CreateAnnouncementRequest request, Guid authorId, CancellationToken ct = default)
     {
+        InputRules.ValidateBilingual(request.TitleArabic, request.TitleEnglish, "title");
+        InputRules.ValidateBilingual(request.BodyArabic, request.BodyEnglish, "body");
         ValidateAudience(request);
         var announcement = new Announcement
         {
@@ -22,7 +24,7 @@ public sealed class CommunicationService(FacultyDbContext db, INotificationServi
         var recipients = await ResolveRecipientsAsync(request, ct);
         await notifications.CreateAsync(NotificationType.Announcement,
             announcement.TitleArabic, announcement.TitleEnglish, announcement.BodyArabic, announcement.BodyEnglish,
-            $"/announcements/{announcement.Id}", recipients, ct);
+            $"/announcements/{announcement.Id}", recipients, ct, [authorId]);
         return announcement.Id;
     }
 

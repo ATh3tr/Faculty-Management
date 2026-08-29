@@ -83,11 +83,23 @@ public sealed class CatalogQueryService(FacultyDbContext db)
             .ToListAsync(ct);
     }
 
-    public async Task<IReadOnlyCollection<StudentView>> StudentsAsync(int? studyYear, string? search, CancellationToken ct = default)
+    public async Task<IReadOnlyCollection<StudentView>> StudentsAsync(
+        int? studyYear, string? search, string? searchBy = null, string language = "ar", CancellationToken ct = default)
     {
         var query = db.StudentProfiles.AsNoTracking().Where(x => studyYear == null || x.CurrentStudyYear == studyYear);
         if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(x => x.UniversityNumber.Contains(search) || x.User.FullNameArabic.Contains(search) || x.User.FullNameEnglish.Contains(search));
+        {
+            var term = search.Trim();
+            query = searchBy?.ToLowerInvariant() switch
+            {
+                "universitynumber" => query.Where(x => x.UniversityNumber.Contains(term)),
+                "name" when string.Equals(language, "en", StringComparison.OrdinalIgnoreCase) =>
+                    query.Where(x => x.User.FullNameEnglish.Contains(term)),
+                "name" => query.Where(x => x.User.FullNameArabic.Contains(term)),
+                _ => query.Where(x => x.UniversityNumber.Contains(term)
+                    || x.User.FullNameArabic.Contains(term) || x.User.FullNameEnglish.Contains(term))
+            };
+        }
         return await query.OrderBy(x => x.UniversityNumber).Take(250)
             .Select(x => new StudentView(x.UserId, x.UniversityNumber, x.User.FullNameArabic, x.User.FullNameEnglish, x.CurrentStudyYear, x.Standing))
             .ToListAsync(ct);

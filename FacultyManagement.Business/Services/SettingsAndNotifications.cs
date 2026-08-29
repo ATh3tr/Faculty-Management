@@ -45,7 +45,8 @@ public sealed class NotificationService(FacultyDbContext db, IRealtimeNotifier r
     public async Task<Notification> CreateAsync(
         NotificationType type, string titleArabic, string titleEnglish,
         string bodyArabic, string bodyEnglish, string? link,
-        IEnumerable<Guid> userIds, CancellationToken cancellationToken = default)
+        IEnumerable<Guid> userIds, CancellationToken cancellationToken = default,
+        IEnumerable<Guid>? realtimeExcludedUserIds = null)
     {
         var recipients = userIds.Distinct().ToArray();
         var notification = new Notification
@@ -62,7 +63,11 @@ public sealed class NotificationService(FacultyDbContext db, IRealtimeNotifier r
         await db.SaveChangesAsync(cancellationToken);
 
         var englishView = new NotificationView(notification.Id, type, titleEnglish, bodyEnglish, link, notification.CreatedAtUtc, false);
-        await realtime.NotifyUsersAsync(recipients, englishView, cancellationToken);
+        var realtimeRecipients = realtimeExcludedUserIds is null
+            ? recipients
+            : recipients.Except(realtimeExcludedUserIds).ToArray();
+        if (realtimeRecipients.Length > 0)
+            await realtime.NotifyUsersAsync(realtimeRecipients, englishView, cancellationToken);
         return notification;
     }
 }

@@ -14,7 +14,8 @@ public interface INotificationService
     Task<Notification> CreateAsync(
         NotificationType type, string titleArabic, string titleEnglish,
         string bodyArabic, string bodyEnglish, string? link,
-        IEnumerable<Guid> userIds, CancellationToken cancellationToken = default);
+        IEnumerable<Guid> userIds, CancellationToken cancellationToken = default,
+        IEnumerable<Guid>? realtimeExcludedUserIds = null);
 }
 
 public interface ISettingsService

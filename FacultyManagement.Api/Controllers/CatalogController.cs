@@ -45,7 +45,8 @@ public sealed class CatalogController(CatalogQueryService catalog) : ControllerB
 
     [Authorize(Roles = $"{AppRoles.Teacher},{AppRoles.Professor},{AppRoles.ExamsOfficer},{AppRoles.Admin}")]
     [HttpGet("students")]
-    public Task<IReadOnlyCollection<StudentView>> Students(int? studyYear, string? search) => catalog.StudentsAsync(studyYear, search);
+    public Task<IReadOnlyCollection<StudentView>> Students(int? studyYear, string? search, string? searchBy, string language = "ar") =>
+        catalog.StudentsAsync(studyYear, search, searchBy, language);
 
     [Authorize(Roles = AppRoles.Admin)]
     [HttpGet("staff")]

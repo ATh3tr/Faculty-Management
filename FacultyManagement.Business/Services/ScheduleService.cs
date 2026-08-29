@@ -121,6 +121,7 @@ public sealed class ScheduleService(FacultyDbContext db, INotificationService no
 
     private async Task<ScheduleSeries> BuildAndValidateSeriesAsync(CreateScheduleRequest request, Guid creatorId, CancellationToken ct)
     {
+        InputRules.ValidateBilingual(request.TitleArabic, request.TitleEnglish, "title");
         if (!TeachingDays.Contains(request.DayOfWeek)) throw new BusinessException("Teaching is only scheduled Sunday through Thursday.");
         if (request.EndsOn < request.StartsOn) throw new BusinessException("End date must not precede start date.");
         if (!await db.TimeSlots.AnyAsync(x => x.Id == request.TimeSlotId, ct)) throw new BusinessException("Time slot not found.", 404);

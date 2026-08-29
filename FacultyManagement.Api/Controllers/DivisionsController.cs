@@ -10,6 +10,10 @@ namespace FacultyManagement.Api.Controllers;
 public sealed class DivisionsController(DivisionService divisions) : ControllerBase
 {
     [Authorize(Roles = AppRoles.Student)]
+    [HttpGet("mine")]
+    public async Task<IActionResult> Mine() => Ok(await divisions.GetAssignmentAsync(User.UserId()));
+
+    [Authorize(Roles = AppRoles.Student)]
     [HttpPost("register")]
     public async Task<IActionResult> Register() => Ok(await divisions.AssignAsync(User.UserId()));
 
