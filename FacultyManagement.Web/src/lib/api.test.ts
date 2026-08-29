@@ -24,6 +24,7 @@ describe("API client", () => {
     })));
     await expect(api("/api/schedules")).rejects.toEqual(expect.objectContaining({ status: 409, message: "Room is already reserved." }));
   });
+
   it("surfaces plain-text errors without consuming the response twice", async () => {
     const response = new Response("Too Many Requests", { status: 429 });
     const textSpy = vi.spyOn(response, "text");
