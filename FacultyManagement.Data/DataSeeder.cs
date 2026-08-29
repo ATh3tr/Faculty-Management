@@ -24,15 +24,21 @@ public static class DataSeeder
                 await roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
         }
 
-        if (!await db.SystemSettings.AnyAsync(cancellationToken))
+        var defaultSettings = new Dictionary<string, string>
         {
-            db.SystemSettings.AddRange(
-                new SystemSetting { Key = SettingKeys.MaximumFailedCoursesForPromotion, Value = "4" },
-                new SystemSetting { Key = SettingKeys.ProgramYears, Value = "5" },
-                new SystemSetting { Key = SettingKeys.DefaultDivisionCapacity, Value = "30" },
-                new SystemSetting { Key = SettingKeys.AppealDeadlineDays, Value = "5" },
-                new SystemSetting { Key = SettingKeys.TimeZone, Value = "Asia/Damascus" });
-        }
+            [SettingKeys.MaximumFailedCoursesForPromotion] = "4",
+            [SettingKeys.ProgramYears] = "5",
+            [SettingKeys.DefaultDivisionCapacity] = "30",
+            [SettingKeys.AppealDeadlineDays] = "5",
+            [SettingKeys.TimeZone] = "Asia/Damascus",
+            [SettingKeys.FacultyNameArabic] = BrandingDefaults.FacultyNameArabic,
+            [SettingKeys.FacultyNameEnglish] = BrandingDefaults.FacultyNameEnglish
+        };
+        var existingSettingKeys = (await db.SystemSettings.Select(x => x.Key).ToListAsync(cancellationToken))
+            .ToHashSet(StringComparer.Ordinal);
+        db.SystemSettings.AddRange(defaultSettings
+            .Where(x => !existingSettingKeys.Contains(x.Key))
+            .Select(x => new SystemSetting { Key = x.Key, Value = x.Value }));
 
         if (!await db.TimeSlots.AnyAsync(cancellationToken))
         {

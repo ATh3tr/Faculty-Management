@@ -2,6 +2,7 @@ import { useEffect, useState, type ComponentType } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Bell, BookOpenCheck, Building2, CalendarDays, ChevronLeft, ClipboardCheck, FileClock, Gauge, GraduationCap, Languages, LogOut, Megaphone, Menu, PanelLeftClose, Settings, Sparkles, Users, X } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
+import { useBranding } from "../branding/BrandingContext";
 import { useLanguage } from "../lib/i18n";
 import type { Role } from "../types";
 
@@ -21,14 +22,14 @@ const navigation: NavItem[] = [
 ];
 
 export function AppShell() {
-  const { user, logout, liveNotification } = useAuth(); const { t, language, toggleLanguage, pick } = useLanguage();
+  const { user, logout, liveNotification } = useAuth(); const { facultyName } = useBranding(); const { t, language, toggleLanguage, pick } = useLanguage();
   const navigate = useNavigate(); const [open, setOpen] = useState(false); const [collapsed, setCollapsed] = useState(false); const [toast, setToast] = useState(liveNotification);
   useEffect(() => { if (liveNotification) { setToast(liveNotification); const timer = window.setTimeout(() => setToast(null), 6000); return () => window.clearTimeout(timer); } }, [liveNotification]);
   const visible = navigation.filter(item => !item.roles || user?.roles.some(role => item.roles!.includes(role)));
   const signOut = async () => { await logout(); navigate("/login"); };
   return <div className={`app-shell ${collapsed ? "is-collapsed" : ""}`}>
     <aside className={`sidebar ${open ? "is-open" : ""}`}>
-      <div className="brand-block"><div className="brand-emblem"><ClipboardCheck size={24} /></div><div><strong>FacultyFlow</strong><span>{t("brand")}</span></div><button className="icon-button mobile-only" onClick={() => setOpen(false)}><X size={20} /></button></div>
+      <div className="brand-block"><div className="brand-emblem"><ClipboardCheck size={24} /></div><div><strong>{facultyName}</strong></div><button className="icon-button mobile-only" onClick={() => setOpen(false)}><X size={20} /></button></div>
       <nav>{visible.map(({ to, key, icon: Icon }) => <NavLink key={to} to={to} end={to === "/"} onClick={() => setOpen(false)} title={t(key)}><Icon size={19} /><span>{t(key)}</span><ChevronLeft className="nav-chevron" size={14} /></NavLink>)}</nav>
       <button className="collapse-button desktop-only" onClick={() => setCollapsed(x => !x)}><PanelLeftClose size={18} /><span>{collapsed ? "Expand" : "Collapse"}</span></button>
     </aside>
