@@ -40,7 +40,7 @@ public sealed class AuthController(
         return new TokenResponse(issued.AccessToken, issued.AccessTokenExpiresAtUtc);
     }
 
-    [AllowAnonymous, EnableRateLimiting("auth")]
+    [AllowAnonymous, EnableRateLimiting("refresh")]
     [HttpPost("refresh")]
     public async Task<ActionResult<TokenResponse>> Refresh()
     {
