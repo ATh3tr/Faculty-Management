@@ -83,41 +83,11 @@ builder.Services.AddCors(options => options.AddPolicy("React", policy =>
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-    options.OnRejected = async (context, cancellationToken) =>
+    options.AddFixedWindowLimiter("auth", limiter =>
     {
-        var retryAfterSeconds = context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter)
-            ? Math.Max(1, (int)Math.Ceiling(retryAfter.TotalSeconds))
-            : 60;
-        context.HttpContext.Response.Headers["Retry-After"] = retryAfterSeconds.ToString();
-        await context.HttpContext.Response.WriteAsJsonAsync(new
-        {
-            status = StatusCodes.Status429TooManyRequests,
-            title = "rate_limit_exceeded",
-            detail = $"Too many requests. Try again in {retryAfterSeconds} seconds."
-        }, cancellationToken);
-    };
-    options.AddPolicy("auth", context =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 10,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0,
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                AutoReplenishment = true
-            }));
-    options.AddPolicy("refresh", context =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 60,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0,
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                AutoReplenishment = true
-            }));
+        limiter.PermitLimit = 10; limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.QueueLimit = 0; limiter.AutoReplenishment = true;
+    });
 });
 
 var app = builder.Build();
@@ -132,7 +102,6 @@ app.UseCors("React");
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapGet("/", () => Results.Redirect("/swagger"));
 app.MapControllers();
 app.MapHub<FacultyHub>("/hubs/faculty");
 app.MapHealthChecks("/health").AllowAnonymous();
