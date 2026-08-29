@@ -14,8 +14,16 @@ export async function api<T = void>(path: string, init: RequestInit = {}): Promi
   if (init.body && !(init.body instanceof FormData) && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   const response = await fetch(`${apiBase}${path}`, { ...init, headers, credentials: "include" });
   if (!response.ok) {
-    let details: unknown;
-    try { details = await response.json(); } catch { details = await response.text(); }
+    const rawBody = await response.text();
+let details: unknown = rawBody;
+
+if (rawBody) {
+  try {
+    details = JSON.parse(rawBody);
+  } catch {
+    // Keep the original text when it is not JSON.
+  }
+}
     const problem = details as { detail?: string; title?: string; errors?: Record<string, string[]> } | undefined;
     const validation = problem?.errors ? Object.values(problem.errors).flat().join(" ") : "";
     throw new ApiError(response.status, validation || problem?.detail || problem?.title || `Request failed (${response.status})`, details);

@@ -1,5 +1,6 @@
 using FacultyManagement.Business.Contracts;
 using FacultyManagement.Data;
+using FacultyManagement.Data.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace FacultyManagement.Business.Services;
